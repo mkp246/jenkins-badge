@@ -2,14 +2,15 @@
   "name": "jenkins-badge",
   "version": "1.0.0",
   "description": "NNMi Jenkins Badges for GitHub",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "app.js"
   },
   "author": "manoj.kumar22@hpe.com",
   "license": "ISC",
   "dependencies": {
-    "canvas": "^1.6.11",
+    "canvas": "1.6.11",
     "express": "4.16.3"
   },
   "repository": {
