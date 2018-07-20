@@ -1,12 +1,24 @@
-var express = require('express');
-var canvas = require('canvas');
+const express = require('express');
+const dbg = require('debug')('app');
+const app = express();
+const jenkinsapi = require('jenkins-api');
+const https = require('https');
+const fs = require('fs');
 
-var app = express();
+var jenkins = jenkinsapi.init("https://nnmjenkins.ftc.hpeswlab.net:8443/jenkins");
 
-app.listen(8888);
+var status = require("./status")(dbg, jenkins);
+app.use("/status", status);
 
-var main  = require("./main")
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
-app.use("/main", main);
-
-console.log('server started ...');
+var sslOptions = {
+    key: fs.readFileSync('certs/server.key'),
+    cert: fs.readFileSync('certs/server.crt')
+};
+https.createServer(sslOptions, app).listen(8888);
+dbg('server started ...');
