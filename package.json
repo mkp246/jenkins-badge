@@ -1,0 +1,19 @@
+{
+  "name": "jenkins-badge",
+  "version": "1.0.0",
+  "description": "NNMi Jenkins Badges for GitHub",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "manoj.kumar22@hpe.com",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^1.6.11",
+    "express": "4.16.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.houston.softwaregrp.net:manoj-kumar22/jenkins-badge.git"
+  }
+}
