@@ -7,13 +7,13 @@ fs.readFileSync('config/app.properties').toString().split('\n').forEach(line => 
 
 const express = require('express');
 const dbg = require('debug')('app');
-const app = express();
 const jenkinsapi = require('jenkins-api');
 const https = require('https');
+const app = express();
 
 const jenkins = jenkinsapi.init("https://nnmjenkins.ftc.hpeswlab.net:8443/jenkins");
 
-const status = require("./status")(dbg, jenkins);
+const status = require("./api/status")(dbg, jenkins);
 app.use("/status", status);
 
 app.use(function(req, res, next) {
