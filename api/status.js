@@ -5,7 +5,7 @@ const Canvas = require('canvas');
 status.get("/:job/last", function (req, res) {
     var job = req.params.job;
     dbg("job: %s", job);
-    jenkins.last_build_info(job, (err, data)=>{
+    jenkins.lastBuildInfo(job, (err, data)=>{
         var result = data.result;
         dbg(result);
         const canvas = new Canvas(200, 100);

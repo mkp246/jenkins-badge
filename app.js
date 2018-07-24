@@ -7,7 +7,7 @@ fs.readFileSync('config/app.properties').toString().split('\n').forEach(line => 
 
 const express = require('express');
 const dbg = require('debug')('app');
-const jenkinsapi = require('jenkins-api');
+const jenkinsapi = require('./lib/jenkinsApi');
 const https = require('https');
 const app = express();
 
