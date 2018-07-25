@@ -1,8 +1,8 @@
 const fs = require('fs');
 
 fs.readFileSync('config/app.properties').toString().split('\n').forEach(line => {
-    keyVal = line.split("=", 2);
-    process.env[keyVal[0]] = keyVal[1];
+    var [key, val] = line.split("=", 2);
+    process.env[key] = val;
 });
 
 const express = require('express');
