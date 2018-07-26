@@ -2,10 +2,10 @@ var express = require('express');
 var status = express.Router();
 const Canvas = require('canvas');
 
-status.get("/:job/last", function (req, res) {
+status.get("/:job/last", function(req, res) {
     var job = req.params.job;
     dbg("job: %s", job);
-    jenkins.lastBuildInfo(job, (err, data)=>{
+    jenkins.lastBuildInfo(job, (err, data) => {
         var result = data.result;
         dbg(result);
         const canvas = new Canvas(200, 100);
@@ -18,7 +18,7 @@ status.get("/:job/last", function (req, res) {
     });
 });
 
-module.exports = function (dbg, jenkins){
+module.exports = function(dbg, jenkins) {
     this.dbg = dbg;
     this.jenkins = jenkins
     return status;
