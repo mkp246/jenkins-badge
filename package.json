@@ -12,7 +12,6 @@
   "dependencies": {
     "canvas": "1.6.11",
     "express": "4.16.3",
-    "jenkins-api": "0.3.1",
     "debug": "^2.6.9"
   },
   "repository": {
