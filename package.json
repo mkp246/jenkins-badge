@@ -10,9 +10,9 @@
   "author": "manoj.kumar22@hpe.com",
   "license": "ISC",
   "dependencies": {
-    "canvas": "1.6.11",
+    "debug": "^2.6.9",
     "express": "4.16.3",
-    "debug": "^2.6.9"
+    "string-width": "^2.1.1"
   },
   "repository": {
     "type": "git",
