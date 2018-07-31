@@ -22,6 +22,8 @@ done.then(() => {
 
     const status = require("./api/status")(dbg, jenkins);
     app.use("/status", status);
+    const custom = require("./api/custom");
+    app.use("/custom", custom);
 
     app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");

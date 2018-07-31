@@ -8,12 +8,11 @@ var colorMap = {
     yellowgreen: '#a4a61d',
     yellow: '#dfb317',
     lightgrey: '#9f9f9f',
-    blue: '#007ec6'
+    blue: '#007ec6',
+    pink: '#FF1493'
 };
 
 var stringWidth = require('string-width');
-var svgTemplate = require('./template.js');
-
 var baseWidth = 7;
 
 var defaultOptions = {
@@ -22,16 +21,17 @@ var defaultOptions = {
     color: 'red'
 };
 
-module.exports = function badge(options) {
+module.exports = function badge(options, template) {
     options = options || {};
     var config = Object.assign(defaultOptions, options);
     var subjectWidth = stringWidth(config.subject) * baseWidth + 10;
     var statusWidth = stringWidth(config.status) * baseWidth + 10;
-
     config.subjectWidth = subjectWidth;
     config.statusWidth = statusWidth;
     config.width = subjectWidth + statusWidth;
     config.color = colorMap[config.color] || colorMap.yellow;
-    var svg = svgTemplate(config);
+    config.from = colorMap[config.from] || colorMap.yellow;
+    config.to = colorMap[config.to] || colorMap.yellow;
+    var svg = template(config);
     return svg;
 };
