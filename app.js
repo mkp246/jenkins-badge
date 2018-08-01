@@ -18,7 +18,7 @@ done.then(() => {
     const jenkinsApi = require('./lib/jenkinsApi')(https);
     const app = express();
 
-    const jenkins = jenkinsApi.init("nnmjenkins.ftc.hpeswlab.net", 8443, "jenkins");
+    const jenkins = jenkinsApi.init();
 
     const status = require("./api/status")(dbg, jenkins);
     app.use("/status", status);
