@@ -8,6 +8,7 @@ status.get("/:job/last", function(req, res) {
     dbg("job: %s", job);
     jenkins.lastBuildInfo(job, (err, data) => {
         var result = data.result;
+        dbg(data);
         dbg(result);
         let color = (result == 'SUCCESS') ? 'green' : 'red';
         var svg = badge({
