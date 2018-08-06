@@ -24,6 +24,8 @@ done.then(() => {
     app.use("/status", status);
     const custom = require("./api/custom");
     app.use("/custom", custom);
+    const testReport = require("./api/testReport");
+    app.use("/testReport", testReport);
 
     app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
