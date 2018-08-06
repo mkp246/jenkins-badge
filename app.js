@@ -24,7 +24,7 @@ done.then(() => {
     app.use("/status", status);
     const custom = require("./api/custom");
     app.use("/custom", custom);
-    const testReport = require("./api/testReport");
+    const testReport = require("./api/testReport")(dbg, jenkins);
     app.use("/testReport", testReport);
 
     app.use(function(req, res, next) {

@@ -1,20 +1,18 @@
 var express = require('express');
-const status = express.Router();
-const badge = require('../badge/badge');
-const normal = require('../badge/template/normal');
+const testReport = express.Router();
+const testBadge = require('../badge/testBadge');
+const test = require("../badge/template/test");
 
-status.get("/:job", function(req, res) {
+testReport.get("/:job", function(req, res) {
     var job = req.params.job;
-    jenkins.lastBuildInfo(job, (err, data) => {
-        var result = data.result;
+    jenkins.lastBuildTestReport(job, (err, data) => {
         dbg(data);
-        dbg(result);
-        let color = (result == 'SUCCESS') ? 'green' : 'red';
-        var svg = badge({
-            subject: 'last',
-            status: result,
-            color: color
-        }, normal);
+        var svg = testBadge({
+            subject: 'tests',
+            status1: data.failCount.toString(),
+            status2: data.skipCount.toString(),
+            status3: data.totalCount.toString()
+        }, test);
         res.set('Content-Type', 'image/svg+xml');
         res.send(svg);
     });
@@ -23,5 +21,5 @@ status.get("/:job", function(req, res) {
 module.exports = function(dbg, jenkins) {
     this.dbg = dbg;
     this.jenkins = jenkins
-    return status;
+    return testReport;
 };
