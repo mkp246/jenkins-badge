@@ -28,8 +28,10 @@ status.get("/:job/now", function(req, res) {
     jenkins.currentBuildInfo(job, (err, data) => {
         var building = data.building;
         dbg(data);
-        dbg(building);
         if (building) {
+            let percentDone = Math.round((new Date().getTime() - data.timestamp) / data.estimatedDuration * 100);
+            let eta = (100 - percentDone) * data.estimatedDuration / (1000 * 3600 * 100);
+            console.log("done: " + percentDone + "%, ETA " + Math.floor(eta) + " hr " + Math.ceil((eta % 1) * 60) + "m");
             var svg = badge({
                 subject: 'now',
                 status: 'BUILDING',
