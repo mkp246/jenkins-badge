@@ -21,5 +21,12 @@ module.exports = function badge(options, template) {
     config.status2Width = status2Width;
     config.status3Width = status3Width;
     config.width = subjectWidth + status1Width + status2Width + status3Width;
+
+    config.color1 = colorMap[config.color1] || colorMap.red;
+    config.color2 = colorMap[config.color2] || colorMap.yellow;
+    config.color3 = colorMap[config.color3] || colorMap.blue;
+
+    config.from = colorMap[config.from] || colorMap.yellow;
+    config.to = colorMap[config.to] || colorMap.green;
     return template(config);
 };

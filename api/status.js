@@ -1,8 +1,9 @@
 var express = require('express');
 var status = express.Router();
 const badge = require('../badge/badge');
+const testBadge = require('../badge/testBadge');
 const normal = require('../badge/template/normal');
-const anim = require("../badge/template/anim");
+const nowAnim = require("../badge/template/nowAnim");
 
 status.get("/:job/last", function(req, res) {
     var job = req.params.job;
@@ -31,13 +32,17 @@ status.get("/:job/now", function(req, res) {
         if (building) {
             let percentDone = Math.round((new Date().getTime() - data.timestamp) / data.estimatedDuration * 100);
             let eta = (100 - percentDone) * data.estimatedDuration / (1000 * 3600 * 100);
-            console.log("done: " + percentDone + "%, ETA " + Math.floor(eta) + " hr " + Math.ceil((eta % 1) * 60) + "m");
-            var svg = badge({
+            let etaMessage = "+" + Math.floor(eta) + "h" + Math.ceil((eta % 1) * 60) + "m";
+            var svg = testBadge({
                 subject: 'now',
-                status: 'BUILDING',
-                from: 'green',
-                to: 'blue'
-            }, anim);
+                status1: 'BUILDING',
+                status2: percentDone + "%",
+                status3: etaMessage,
+                color2: 'blue',
+                color3: 'yellow',
+                from: 'persianRed',
+                to: 'green'
+            }, nowAnim);
         } else {
             var svg = badge({
                 subject: 'now',
