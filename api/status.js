@@ -8,7 +8,7 @@ const nowAnim = require("../badge/template/nowAnim");
 status.get("/:job/last", function(req, res) {
     var job = req.params.job;
     dbg("job: %s", job);
-    jenkins.lastBuildInfo(job, (err, data) => {
+    jenkins.lastCompletedBuildInfo(job, (err, data) => {
         var result = data.result;
         dbg(data);
         dbg(result);

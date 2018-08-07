@@ -26,6 +26,8 @@ done.then(() => {
     app.use("/custom", custom);
     const testReport = require("./api/testReport")(dbg, jenkins);
     app.use("/testReport", testReport);
+    const jacoco = require("./api/jacoco")(dbg, jenkins);
+    app.use("/jacoco", jacoco);
 
     app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");

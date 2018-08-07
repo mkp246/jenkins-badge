@@ -5,7 +5,7 @@ const test = require("../badge/template/test");
 
 testReport.get("/:job", function(req, res) {
     var job = req.params.job;
-    jenkins.lastBuildTestReport(job, (err, data) => {
+    jenkins.lastCompletedBuildTestReport(job, (err, data) => {
         dbg(data);
         var svg = testBadge({
             subject: 'tests',
