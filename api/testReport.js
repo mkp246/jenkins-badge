@@ -1,5 +1,6 @@
-var express = require('express');
-const testReport = express.Router();
+const testReport = require('express').Router();
+const jenkins = require('../lib/jenkinsApi');
+const dbg = require('debug')('api:testReport:');
 const testBadge = require('../badge/testBadge');
 const test = require("../badge/template/test");
 
@@ -18,8 +19,4 @@ testReport.get("/:job", function(req, res) {
     });
 });
 
-module.exports = function(dbg, jenkins) {
-    this.dbg = dbg;
-    this.jenkins = jenkins
-    return testReport;
-};
+module.exports = testReport;

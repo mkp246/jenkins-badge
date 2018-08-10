@@ -1,5 +1,6 @@
-var express = require('express');
-const jacoco = express.Router();
+const jacoco = require('express').Router();
+const dbg = require('debug')('api:jacoco:');
+const jenkins = require("../lib/jenkinsApi");
 const noraml = require("../badge/template/normal");
 const badge = require("../badge/badge");
 
@@ -85,8 +86,4 @@ function crateJacocoBadge(subject, percent, minPercent) {
     }, noraml);
 }
 
-module.exports = function(dbg, jenkins) {
-    this.dbg = dbg;
-    this.jenkins = jenkins
-    return jacoco;
-};
+module.exports = jacoco;

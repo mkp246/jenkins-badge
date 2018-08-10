@@ -18,19 +18,16 @@ done.then(() => {
     const express = require('express');
     const dbg = require('debug')('app:');
     const https = require('https');
-    const jenkins = require('./lib/jenkinsApi');
-    dbg("jenkins: " + jenkins);
+    require('./lib/jenkinsApi').init();
     const app = express();
 
-    jenkins.init();
-
-    const status = require("./api/status")(dbg, jenkins);
+    const status = require("./api/status");
     app.use("/status", status);
     const custom = require("./api/custom");
     app.use("/custom", custom);
-    const testReport = require("./api/testReport")(dbg, jenkins);
+    const testReport = require("./api/testReport");
     app.use("/testReport", testReport);
-    const jacoco = require("./api/jacoco")(dbg, jenkins);
+    const jacoco = require("./api/jacoco");
     app.use("/jacoco", jacoco);
 
     app.use(function(req, res, next) {
