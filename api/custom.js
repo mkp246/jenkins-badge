@@ -1,5 +1,4 @@
-var express = require('express');
-var custom = express.Router();
+const custom = require('express').Router();
 const badge = require('../badge/badge');
 const anim = require('../badge/template/anim');
 const noraml = require('../badge/template/normal');

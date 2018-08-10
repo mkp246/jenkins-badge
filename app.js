@@ -20,7 +20,7 @@ done.then(() => {
     const https = require('https');
     require('./lib/jenkinsApi').init();
     const app = express();
-
+    
     const status = require("./api/status");
     app.use("/status", status);
     const custom = require("./api/custom");
@@ -29,6 +29,10 @@ done.then(() => {
     app.use("/testReport", testReport);
     const jacoco = require("./api/jacoco");
     app.use("/jacoco", jacoco);
+
+    require('./lib/gitHubApi').init();
+    const github = require("./api/github");
+    app.use("/github", github);
 
     app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
@@ -41,6 +45,6 @@ done.then(() => {
         key: fs.readFileSync('certs/server.key'),
         cert: fs.readFileSync('certs/server.crt')
     };
-    https.createServer(sslOptions, app).listen(8888);
-    dbg('server started ...');
+    https.createServer(sslOptions, app).listen(process.env.APP_PORT);
+    dbg('server started on port %s', process.env.APP_PORT);
 });
