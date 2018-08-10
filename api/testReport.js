@@ -7,8 +7,12 @@ const test = require("../badge/template/test");
 testReport.get("/:job", function(req, res) {
     var job = req.params.job;
     jenkins.lastCompletedBuildTestReport(job, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
         dbg(data);
-        var svg = testBadge({
+        let svg = testBadge({
             subject: 'tests',
             status1: data.failCount.toString(),
             status2: data.skipCount.toString(),

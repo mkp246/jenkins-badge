@@ -1,7 +1,7 @@
 const custom = require('express').Router();
 const badge = require('../badge/badge');
 const anim = require('../badge/template/anim');
-const noraml = require('../badge/template/normal');
+const normal = require('../badge/template/normal');
 
 custom.get("/:subject/:status/:color", function(req, res) {
     let [from, to] = req.params.color.split('-');
@@ -10,7 +10,7 @@ custom.get("/:subject/:status/:color", function(req, res) {
             subject: req.params.subject,
             status: req.params.status,
             color: req.params.color,
-        }, noraml);
+        }, normal);
     } else {
         var svg = badge({
             subject: req.params.subject,

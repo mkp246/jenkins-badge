@@ -11,11 +11,15 @@ status.get("/:job/last", function(req, res) {
     var job = req.params.job;
     dbg("job: %s", job);
     jenkins.lastCompletedBuildInfo(job, (err, data) => {
-        var result = data.result;
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        let result = data.result;
         dbg(data);
         dbg(result);
         let color = (result == 'SUCCESS') ? 'green' : 'red';
-        var svg = badge({
+        let svg = badge({
             subject: 'last',
             status: result,
             color: color
@@ -29,7 +33,11 @@ status.get("/:job/now", function(req, res) {
     var job = req.params.job;
     dbg("job: %s", job);
     jenkins.currentBuildInfo(job, (err, data) => {
-        var building = data.building;
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        let building = data.building;
         dbg(data);
         if (building) {
             let percentDone = Math.round((new Date().getTime() - data.timestamp) / data.estimatedDuration * 100);

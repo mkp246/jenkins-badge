@@ -1,12 +1,16 @@
 const jacoco = require('express').Router();
 const dbg = require('debug')('api:jacoco:');
 const jenkins = require("../lib/jenkinsApi");
-const noraml = require("../badge/template/normal");
+const normal = require("../badge/template/normal");
 const badge = require("../badge/badge");
 
 jacoco.get("/:job", function(req, res) {
     var job = req.params.job;
     jenkins.lastSuccessfulBuildJacocoReport(job, null, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
         dbg(data);
         let averageLMC = (data.lineCoverage.percentage + data.methodCoverage.percentage + data.classCoverage.percentage) / 3;
         averageLMC = Math.round(averageLMC); ///LMC=line,method,class
@@ -19,6 +23,10 @@ jacoco.get("/:job", function(req, res) {
 jacoco.get("/:job/branch", function(req, res) {
     var job = req.params.job;
     jenkins.lastSuccessfulBuildJacocoReport(job, "branchCoverage", (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
         dbg(data);
         let svg = crateJacocoBadge('branch', data.branchCoverage.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -29,6 +37,10 @@ jacoco.get("/:job/branch", function(req, res) {
 jacoco.get("/:job/class", function(req, res) {
     var job = req.params.job;
     jenkins.lastSuccessfulBuildJacocoReport(job, "classCoverage", (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
         dbg(data);
         let svg = crateJacocoBadge('class', data.classCoverage.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -39,6 +51,10 @@ jacoco.get("/:job/class", function(req, res) {
 jacoco.get("/:job/complexity", function(req, res) {
     var job = req.params.job;
     jenkins.lastSuccessfulBuildJacocoReport(job, "complexityScore", (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
         dbg(data);
         let svg = crateJacocoBadge('complexity', data.complexityScore.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -49,6 +65,10 @@ jacoco.get("/:job/complexity", function(req, res) {
 jacoco.get("/:job/instruction", function(req, res) {
     var job = req.params.job;
     jenkins.lastSuccessfulBuildJacocoReport(job, "instructionCoverage", (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
         dbg(data);
         let svg = crateJacocoBadge('instruction', data.instructionCoverage.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -59,6 +79,10 @@ jacoco.get("/:job/instruction", function(req, res) {
 jacoco.get("/:job/line", function(req, res) {
     var job = req.params.job;
     jenkins.lastSuccessfulBuildJacocoReport(job, "lineCoverage", (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
         dbg(data);
         let svg = crateJacocoBadge('line', data.lineCoverage.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -69,6 +93,10 @@ jacoco.get("/:job/line", function(req, res) {
 jacoco.get("/:job/method", function(req, res) {
     var job = req.params.job;
     jenkins.lastSuccessfulBuildJacocoReport(job, "methodCoverage", (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
         dbg(data);
         let svg = crateJacocoBadge('method', data.methodCoverage.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -83,7 +111,7 @@ function crateJacocoBadge(subject, percent, minPercent) {
         subject: subject,
         status: percent + "%",
         color: isOK ? 'green' : 'red'
-    }, noraml);
+    }, normal);
 }
 
 module.exports = jacoco;
