@@ -4,21 +4,25 @@ const readline = require('readline');
 let done = new Promise(resolve => {
     readline.createInterface(fs.createReadStream('./config/app.properties'))
         .on('line', line => {
-            var [key, val] = line.split("=", 2);
-            process.env[key] = val;
+            if (!line.startsWith('#') && !/^ *$/.test(line)) {
+                var [key, val] = line.split("=", 2);
+                process.env[key] = val;
+            }
         })
         .on('close', () => {
             resolve(0);
         });
 });
+
 done.then(() => {
     const express = require('express');
-    const dbg = require('debug')('app');
+    const dbg = require('debug')('app:');
     const https = require('https');
-    const jenkinsApi = require('./lib/jenkinsApi')(https);
+    const jenkins = require('./lib/jenkinsApi');
+    dbg("jenkins: " + jenkins);
     const app = express();
 
-    const jenkins = jenkinsApi.init();
+    jenkins.init();
 
     const status = require("./api/status")(dbg, jenkins);
     app.use("/status", status);
