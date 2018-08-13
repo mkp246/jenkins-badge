@@ -51,6 +51,23 @@ github.get("/:repo/branches", (req, res) => {
     });
 })
 
+github.get("/:repo/tags", (req, res) => {
+    let repo = req.params.repo;
+    dbg("repo: %s", repo);
+    gitHubApi.getTagCount(repo, (err, data) => {
+        dbg(data);
+        let json = JSON.parse(data);
+        let tags = (getPathOrNull(json, "data.repository.refs.totalCount") || 0).toString();
+        let svg = badge({
+            subject: 'tags',
+            status: tags,
+            color: 'blue',
+        }, normal);
+        res.set('Content-Type', 'image/svg+xml');
+        res.send(svg);
+    });
+})
+
 function getPathOrNull(json, path) {
     let paths = path.split('.');
     while ((json != null) && (paths.length > 0)) {
