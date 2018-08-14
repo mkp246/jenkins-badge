@@ -20,7 +20,7 @@ done.then(() => {
     const https = require('https');
     require('./lib/jenkinsApi').init();
     const app = express();
-    
+
     const status = require("./api/status");
     app.use("/status", status);
     const custom = require("./api/custom");
@@ -33,6 +33,9 @@ done.then(() => {
     require('./lib/gitHubApi').init();
     const github = require("./api/github");
     app.use("/github", github);
+
+    const release = require("./api/release");
+    app.use('/release', release);
 
     app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
