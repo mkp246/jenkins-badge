@@ -6,43 +6,51 @@ const dbg = require("debug")('api:release:');
 
 release.get("/:job", (req, res) => {
     let job = req.params.job;
-    jenkins.lastRelease(job, (err, data) => {
-        if (err != null) {
+    Promise.all([new Promise((resolve) => {
+        jenkins.lastRelease(job, (err, data) => {
+            resolve({
+                err,
+                data
+            });
+        });
+    }), new Promise((resolve) => {
+        jenkins.releaseBuildRunning(job, (err, data) => {
+            resolve({
+                err,
+                data
+            });
+        })
+    })]).
+    then(values => {
+        dbg(values);
+        if ((values[0].err != null) || (values[1].err != null)) {
             res.sendStatus(503);
             return;
         }
-        dbg(data);
-        let release = data.match(/<value>(.*)<\/value>/m)[1];
-        let timestamp = data.match(/<timestamp>(.*)<\/timestamp>/m)[1];
-        let duration = data.match(/<duration>(.*)<\/duration>/m)[1];
+        let data1 = values[0].data;
+        let release = data1.match(/<value>(.*)<\/value>/m)[1];
+        let timestamp = data1.match(/<timestamp>(.*)<\/timestamp>/m)[1];
+        let duration = data1.match(/<duration>(.*)<\/duration>/m)[1];
         let days = (new Date() - timestamp - duration) / (86400000);
         let daysAgo = Math.floor(days);
         let hoursAgo = Math.floor((days % 1) * 24);
-        dbg(hoursAgo);
+
+        let data2 = values[1].data;
+        let isRelease = data2.match(/<value>(.*)<\/value>/m) != null;
+        let isRunning = data2.match(/<building>(.*)<\/building>/m)[1] == "true";
+        let colorTo = 'blue';
+        if (isRelease && isRunning) colorTo = 'green'; //a release build is running
+
         let svg = releaseBadge({
             subject: 'released',
             color1: 'blue',
+            to: colorTo,
             status1: release,
             status2: `${daysAgo}d ${hoursAgo}hr ago`
         }, releaseTemplate);
         res.set('Content-Type', 'image/svg+xml');
         res.send(svg);
     });
-})
-
-release.get("/:job/r", (req, res) => {
-    let job = req.params.job;
-    jenkins.releaseBuildRunning(job, (err, data) => {
-        if (err != null) {
-            res.sendStatus(503);
-            return;
-        }
-        dbg(data);
-        let isRelease = data.match(/<value>(.*)<\/value>/m) != null;
-        let isRunning = data.match(/<building>(.*)<\/building>/m)[1] == "true";
-        res.set('Content-Type', 'image/svg+xml');
-        res.send(`release ${isRelease}, running ${isRunning}`);
-    });
-})
+});
 
 module.exports = release;

@@ -22,7 +22,7 @@ module.exports = function badge(options, template) {
     config.color1 = colorMap[config.color1] || colorMap.blue;
     config.color2 = colorMap[config.color2] || colorMap.yellow;
 
-    config.from = colorMap[config.from] || colorMap.blue;
-    config.to = colorMap[config.to] || colorMap.blue;
+    config.from = colorMap[config.from] || config.color1;
+    config.to = colorMap[config.to] || config.color1;
     return template(config);
 };
