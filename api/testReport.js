@@ -11,6 +11,7 @@ testReport.get("/:job", function(req, res) {
             res.sendStatus(503);
             return;
         }
+        data = JSON.parse(data);
         dbg(data);
         let svg = testBadge({
             subject: 'tests',

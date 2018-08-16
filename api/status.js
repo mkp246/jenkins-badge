@@ -15,6 +15,7 @@ status.get("/:job/last", function(req, res) {
             res.sendStatus(503);
             return;
         }
+        data = JSON.parse(data);
         let result = data.result;
         dbg(data);
         dbg(result);
@@ -37,6 +38,7 @@ status.get("/:job/now", function(req, res) {
             res.sendStatus(503);
             return;
         }
+        data = JSON.parse(data);
         let building = data.building;
         dbg(data);
         if (building) {

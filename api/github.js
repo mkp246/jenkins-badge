@@ -82,6 +82,7 @@ github.get("/:repo/contributors", (req, res) => {
     let repo = req.params.repo;
     dbg("repo: %s", repo);
     gitHubApi.getContributors(repo, (err, data) => {
+        data = JSON.parse(data);
         let contributorCount = data.length.toString();
         let svg = badge({
             subject: 'contributors',
@@ -97,6 +98,7 @@ github.get("/:repo/legends", (req, res) => {
     let repo = req.params.repo;
     dbg("repo: %s", repo);
     gitHubApi.getLegends(repo, (err, data) => {
+        data = JSON.parse(data);
         data = data.slice(-5);
         let legends = [];
         let dataLength = data.length - 1;

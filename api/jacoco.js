@@ -11,6 +11,7 @@ jacoco.get("/:job", function(req, res) {
             res.sendStatus(503);
             return;
         }
+        data = JSON.parse(data);
         dbg(data);
         let averageLMC = (data.lineCoverage.percentage + data.methodCoverage.percentage + data.classCoverage.percentage) / 3;
         averageLMC = Math.round(averageLMC); ///LMC=line,method,class
@@ -27,6 +28,7 @@ jacoco.get("/:job/branch", function(req, res) {
             res.sendStatus(503);
             return;
         }
+        data = JSON.parse(data);
         dbg(data);
         let svg = crateJacocoBadge('branch', data.branchCoverage.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -41,6 +43,7 @@ jacoco.get("/:job/class", function(req, res) {
             res.sendStatus(503);
             return;
         }
+        data = JSON.parse(data);
         dbg(data);
         let svg = crateJacocoBadge('class', data.classCoverage.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -55,6 +58,7 @@ jacoco.get("/:job/complexity", function(req, res) {
             res.sendStatus(503);
             return;
         }
+        data = JSON.parse(data);
         dbg(data);
         let svg = crateJacocoBadge('complexity', data.complexityScore.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -69,6 +73,7 @@ jacoco.get("/:job/instruction", function(req, res) {
             res.sendStatus(503);
             return;
         }
+        data = JSON.parse(data);
         dbg(data);
         let svg = crateJacocoBadge('instruction', data.instructionCoverage.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -83,6 +88,7 @@ jacoco.get("/:job/line", function(req, res) {
             res.sendStatus(503);
             return;
         }
+        data = JSON.parse(data);
         dbg(data);
         let svg = crateJacocoBadge('line', data.lineCoverage.percentage);
         res.set('Content-Type', 'image/svg+xml');
@@ -97,6 +103,7 @@ jacoco.get("/:job/method", function(req, res) {
             res.sendStatus(503);
             return;
         }
+        data = JSON.parse(data);
         dbg(data);
         let svg = crateJacocoBadge('method', data.methodCoverage.percentage);
         res.set('Content-Type', 'image/svg+xml');
