@@ -121,6 +121,26 @@ github.get("/:repo/legends", (req, res) => {
     });
 })
 
+github.get("/:repo/prs", (req, res) => {
+    let repo = req.params.repo;
+    dbg("repo: %s", repo);
+    gitHubApi.getPRs(repo, (err, data) => {
+        dbg(data);
+        data = JSON.parse(data);
+        let svg = testBadge({
+            subject: 'prs',
+            status1: (getPathOrNull(data, 'data.repository.open.totalCount') || 0).toString(),
+            status2: (getPathOrNull(data, 'data.repository.closed.totalCount') || 0).toString(),
+            status3: (getPathOrNull(data, 'data.repository.merged.totalCount') || 0).toString(),
+            color1: 'ghGreen',
+            color2: 'ghRed',
+            color3: 'ghBlue',
+        }, test);
+        res.set('Content-Type', 'image/svg+xml');
+        res.send(svg);
+    });
+})
+
 function getPathOrNull(json, path) {
     let paths = path.split('.');
     while ((json != null) && (paths.length > 0)) {
