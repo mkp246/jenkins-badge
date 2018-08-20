@@ -14,7 +14,6 @@ docker.get("/:path/tags", (req, res) => {
         }
         dbg(data);
         data = JSON.parse(data);
-        let tags = data.tags.length;
         let svg = badge({
             subject: 'tags',
             status: data.tags.length.toString(),
@@ -25,12 +24,26 @@ docker.get("/:path/tags", (req, res) => {
     });
 })
 
-function getPathOrNull(json, path) {
-    let paths = path.split('.');
-    while ((json != null) && (paths.length > 0)) {
-        json = json[paths.shift()];
-    }
-    return json;
-}
+docker.get("/:path/size", (req, res) => {
+    let path = req.params.path;
+    dbg("repo: %s", path);
+    dockerApi.getSize(path, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let size = data.layers.reduce((sum, layer) => sum + layer.size, data.config.size);
+        size /= 1e6; //convert bytes to MB
+        let svg = badge({
+            subject: 'size',
+            status: size.toFixed(2) + " MB",
+            color: 'blue',
+        }, normal);
+        res.set('Content-Type', 'image/svg+xml');
+        res.send(svg);
+    });
+})
 
 module.exports = docker;
