@@ -46,4 +46,24 @@ docker.get("/:path/size", (req, res) => {
     });
 })
 
+docker.get("/:path/layers", (req, res) => {
+    let path = req.params.path;
+    dbg("repo: %s", path);
+    dockerApi.getLayers(path, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let svg = badge({
+            subject: 'layers',
+            status: data.layers.length.toString(),
+            color: 'blue',
+        }, normal);
+        res.set('Content-Type', 'image/svg+xml');
+        res.send(svg);
+    });
+})
+
 module.exports = docker;
