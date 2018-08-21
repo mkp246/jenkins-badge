@@ -66,4 +66,24 @@ docker.get("/:path/layers", (req, res) => {
     });
 })
 
+docker.get("/:path/steps", (req, res) => {
+    let path = req.params.path;
+    dbg("path: %s", path);
+    dockerApi.getHistory(path, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let svg = badge({
+            subject: 'steps',
+            status: data.history.length.toString(),
+            color: 'blue',
+        }, normal);
+        res.set('Content-Type', 'image/svg+xml');
+        res.send(svg);
+    });
+})
+
 module.exports = docker;
