@@ -29,6 +29,8 @@ const metrics = Object.freeze({
     DIRECTORIES: 'directories',
     LINES_COMMENT: 'comment_lines',
     LINES_COMMENT_DENSITY: 'comment_lines_density',
+    CYCLOMATIC_COMPLEXITY: 'complexity',
+    COGNITIVE_COMPLEXITY: 'cognitive_complexity',
 });
 
 const ratings = '0ABCDE';
@@ -393,6 +395,36 @@ sonar.get("/:componentKey/commentsDensity", (req, res) => {
         data = JSON.parse(data);
         let status = data.component.measures[0].value + '%';
         sendBadge('comments density', status, res);
+    });
+});
+
+sonar.get("/:componentKey/cyclComplexity", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.CYCLOMATIC_COMPLEXITY, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('cyclomatic complexity', status, res);
+    });
+});
+
+sonar.get("/:componentKey/cognComplexity", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.COGNITIVE_COMPLEXITY, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('cognitive complexity', status, res);
     });
 });
 
