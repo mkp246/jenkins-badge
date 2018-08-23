@@ -16,6 +16,10 @@ const metrics = Object.freeze({
     DEBT_RATIO: 'sqale_debt_ratio',
     MAINT_RATING: 'sqale_debt_ratio',
     MAINT_EFFORT: 'effort_to_reach_maintainability_rating_a',
+    DUPL_DENSITY: 'duplicated_lines_density',
+    DUPL_LINES: 'duplicated_lines',
+    DUPL_BLOCKS: 'duplicated_blocks',
+    DUPL_FILES: 'duplicated_files',
 });
 
 const ratings = '0ABCDE';
@@ -186,6 +190,68 @@ sonar.get("/:componentKey/maintEffort", (req, res) => {
         sendBadge('maintainability effort', minutesToDays(effort), res);
     });
 });
+
+//duplications
+sonar.get("/:componentKey/duplDensity", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.DUPL_DENSITY, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value + '%';
+        sendBadge('duplicate density', status, res);
+    });
+});
+
+sonar.get("/:componentKey/duplLines", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.DUPL_LINES, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('duplicate lines', status, res);
+    });
+});
+
+sonar.get("/:componentKey/duplBlocks", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.DUPL_BLOCKS, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('duplicate blocks', status, res);
+    });
+});
+
+sonar.get("/:componentKey/duplFiles", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.DUPL_FILES, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('duplicate files', status, res);
+    });
+});
+
 
 function sendBadge(subject, status, res) {
     let svg = badge({
