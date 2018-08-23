@@ -31,6 +31,7 @@ const metrics = Object.freeze({
     LINES_COMMENT_DENSITY: 'comment_lines_density',
     CYCLOMATIC_COMPLEXITY: 'complexity',
     COGNITIVE_COMPLEXITY: 'cognitive_complexity',
+    ISSUES: 'violations',
 });
 
 const ratings = '0ABCDE';
@@ -425,6 +426,21 @@ sonar.get("/:componentKey/cognComplexity", (req, res) => {
         data = JSON.parse(data);
         let status = data.component.measures[0].value;
         sendBadge('cognitive complexity', status, res);
+    });
+});
+
+sonar.get("/:componentKey/issues", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.ISSUES, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('issues', status, res);
     });
 });
 
