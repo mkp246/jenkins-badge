@@ -20,6 +20,15 @@ const metrics = Object.freeze({
     DUPL_LINES: 'duplicated_lines',
     DUPL_BLOCKS: 'duplicated_blocks',
     DUPL_FILES: 'duplicated_files',
+    LINES_CODE: 'ncloc',
+    LINES: 'lines',
+    STATEMENTS: 'statements',
+    FUNCTIONS: 'functions',
+    CLASSES: 'classes',
+    FILES: 'files',
+    DIRECTORIES: 'directories',
+    LINES_COMMENT: 'comment_lines',
+    LINES_COMMENT_DENSITY: 'comment_lines_density',
 });
 
 const ratings = '0ABCDE';
@@ -252,6 +261,140 @@ sonar.get("/:componentKey/duplFiles", (req, res) => {
     });
 });
 
+sonar.get("/:componentKey/linesCode", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.LINES_CODE, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('lines of code', status, res);
+    });
+});
+
+sonar.get("/:componentKey/lines", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.LINES, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('lines', status, res);
+    });
+});
+
+sonar.get("/:componentKey/statements", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.STATEMENTS, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('statements', status, res);
+    });
+});
+
+sonar.get("/:componentKey/functions", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.FUNCTIONS, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('functions', status, res);
+    });
+});
+
+sonar.get("/:componentKey/classes", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.CLASSES, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('classes', status, res);
+    });
+});
+
+sonar.get("/:componentKey/files", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.FILES, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('files', status, res);
+    });
+});
+
+sonar.get("/:componentKey/dirs", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.DIRECTORIES, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('directories', status, res);
+    });
+});
+
+sonar.get("/:componentKey/comments", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.LINES_COMMENT, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value;
+        sendBadge('comments', status, res);
+    });
+});
+
+sonar.get("/:componentKey/commentsDensity", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.LINES_COMMENT_DENSITY, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let status = data.component.measures[0].value + '%';
+        sendBadge('comments density', status, res);
+    });
+});
 
 function sendBadge(subject, status, res) {
     let svg = badge({
