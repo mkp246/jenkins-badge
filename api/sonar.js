@@ -11,10 +11,16 @@ const metrics = Object.freeze({
     VULNERABILITIES: 'vulnerabilities',
     SEC_RATING: 'security_rating',
     SEC_REMEDIATION_EFFORT: 'security_remediation_effort',
+    CODE_SMELLS: 'code_smells',
+    DEBT: 'sqale_index',
+    DEBT_RATIO: 'sqale_debt_ratio',
+    MAINT_RATING: 'sqale_debt_ratio',
+    MAINT_EFFORT: 'effort_to_reach_maintainability_rating_a',
 });
 
 const ratings = '0ABCDE';
 
+//reliablity
 sonar.get("/:componentKey/bugs", (req, res) => {
     let compKey = req.params.componentKey;
     dbg(compKey);
@@ -60,6 +66,7 @@ sonar.get("/:componentKey/relEffort", (req, res) => {
     });
 });
 
+//security
 sonar.get("/:componentKey/vulnerabilities", (req, res) => {
     let compKey = req.params.componentKey;
     dbg(compKey);
@@ -105,6 +112,81 @@ sonar.get("/:componentKey/secEffort", (req, res) => {
     });
 });
 
+//maintainibility
+sonar.get("/:componentKey/codeSmells", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.CODE_SMELLS, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        sendBadge('code smells', data.component.measures[0].value, res);
+    });
+});
+
+sonar.get("/:componentKey/debt", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.DEBT, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let debt = parseInt(data.component.measures[0].value);
+        sendBadge('debt', minutesToDays(debt), res);
+    });
+});
+
+sonar.get("/:componentKey/debtRatio", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.DEBT_RATIO, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let debtRatio = data.component.measures[0].value + '%';
+        sendBadge('debt ratio', debtRatio, res);
+    });
+});
+
+sonar.get("/:componentKey/maintRating", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.MAINT_RATING, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let debtRatio = parseInt(data.component.measures[0].value);
+        sendBadge('maintainability rating', getMaintRating(debtRatio), res);
+    });
+});
+
+sonar.get("/:componentKey/maintEffort", (req, res) => {
+    let compKey = req.params.componentKey;
+    dbg(compKey);
+    sonarApi.getMeasure(compKey, metrics.MAINT_EFFORT, (err, data) => {
+        if (err != null) {
+            res.sendStatus(503);
+            return;
+        }
+        dbg(data);
+        data = JSON.parse(data);
+        let effort = parseInt(data.component.measures[0].value);
+        sendBadge('maintainability effort', minutesToDays(effort), res);
+    });
+});
+
 function sendBadge(subject, status, res) {
     let svg = badge({
         subject: subject,
@@ -119,4 +201,21 @@ function minutesToDays(minutes) {
     minutes = minutes / 480; //minutes -> day  (8hr/day)
     return `${Math.floor(minutes)}d ${((minutes%1)*8).toFixed(0)}h`; //Ad Bh format
 }
+
+function getMaintRating(debtRatio) {
+    let maintRating = '';
+    if (debtRatio <= 5) {
+        maintRating = 'A';
+    } else if (debtRatio <= 10) {
+        maintRating = 'B';
+    } else if (debtRatio <= 20) {
+        maintRating = 'C';
+    } else if (debtRatio <= 50) {
+        maintRating = 'D';
+    } else {
+        maintRating = 'E';
+    }
+    return maintRating;
+}
+
 module.exports = sonar;
