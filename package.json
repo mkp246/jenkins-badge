@@ -4,7 +4,8 @@
   "description": "NNMi Jenkins Badges for GitHub",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepackage": "npm list -g grunt-cli || npm install -g grunt-cli",
+    "package": "grunt -v package",
     "start": "node app.js"
   },
   "author": "manoj.kumar22@hpe.com",
@@ -17,5 +18,9 @@
   "repository": {
     "type": "git",
     "url": "git@github.houston.softwaregrp.net:manoj-kumar22/jenkins-badge.git"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.3",
+    "grunt-contrib-compress": "^1.4.3"
   }
 }
