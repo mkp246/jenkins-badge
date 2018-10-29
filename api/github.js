@@ -147,6 +147,26 @@ github.get("/:repo/openprs", (req, res) => {
     gitHubApi.getOpenPRs(repo, (err, data) => {
         dbg(data);
         data = JSON.parse(data);
+        prdata = [];
+        data.data.repository.pullRequests.nodes.forEach((pr) => {
+            jenkins = pr.commits.nodes[0].commit.status.contexts.filter((context) => {
+                return context.context == 'Jenkins Bot'
+            })[0];
+            sonar = pr.commits.nodes[0].commit.status.contexts.filter((context) => {
+                return context.context == 'sonarqube'
+            })[0];
+            jenkins = jenkins ? jenkins.state : 'N/A'
+            sonar = sonar ? sonar.state : 'N/A'
+            prdata.push({
+                number: pr.number,
+                author: pr.author.login,
+                daysAgo: pr.createdAt,
+                jenkins: jenkins,
+                sonar: sonar,
+                approved: pr.reviews.totalCount > 0
+            });
+        })
+        dbg(prdata)
         let svg = badge({
             subject: 'prs',
             color: 'ghGreen',
