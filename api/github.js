@@ -141,6 +141,22 @@ github.get("/:repo/prs", (req, res) => {
     });
 })
 
+github.get("/:repo/openprs", (req, res) => {
+    let repo = req.params.repo;
+    dbg("repo: %s", repo);
+    gitHubApi.getOpenPRs(repo, (err, data) => {
+        dbg(data);
+        data = JSON.parse(data);
+        let svg = badge({
+            subject: 'prs',
+            color: 'ghGreen',
+            status: 'iamdon'
+        }, normal);
+        res.set('Content-Type', 'image/svg+xml');
+        res.send(svg);
+    });
+})
+
 function getPathOrNull(json, path) {
     let paths = path.split('.');
     while ((json != null) && (paths.length > 0)) {
