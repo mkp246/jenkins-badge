@@ -7,6 +7,9 @@ const normal = require('../badge/template/normal');
 const testBadge = require('../badge/testBadge');
 const test = require('../badge/template/test');
 
+const multiRowBadge = require('../badge/multiRowBadge');
+const multRow = require('../badge/template/multRow');
+
 const config = {};
 config.legendsExclude = {};
 process.env.LEGENDS_EXCLUDE.split(',').forEach(val => {
@@ -147,31 +150,37 @@ github.get("/:repo/openprs", (req, res) => {
     gitHubApi.getOpenPRs(repo, (err, data) => {
         dbg(data);
         data = JSON.parse(data);
-        prdata = [];
+        prData = {
+            cols: 6,
+            items: [],
+            colors: [],
+            maxLength: 0
+        };
         data.data.repository.pullRequests.nodes.forEach((pr) => {
-            jenkins = pr.commits.nodes[0].commit.status.contexts.filter((context) => {
+            let jenkins = pr.commits.nodes[0].commit.status.contexts.filter((context) => {
                 return context.context == 'Jenkins Bot'
             })[0];
-            sonar = pr.commits.nodes[0].commit.status.contexts.filter((context) => {
+            let sonar = pr.commits.nodes[0].commit.status.contexts.filter((context) => {
                 return context.context == 'sonarqube'
             })[0];
-            jenkins = jenkins ? jenkins.state : 'N/A'
-            sonar = sonar ? sonar.state : 'N/A'
-            prdata.push({
-                number: pr.number,
-                author: pr.author.login,
-                daysAgo: pr.createdAt,
-                jenkins: jenkins,
-                sonar: sonar,
-                approved: pr.reviews.totalCount > 0
-            });
-        })
-        dbg(prdata)
-        let svg = badge({
-            subject: 'prs',
-            color: 'ghGreen',
-            status: 'iamdon'
-        }, normal);
+            jenkins = jenkins ? jenkins.state : 'N/A';
+            sonar = sonar ? sonar.state : 'N/A';
+
+            let seconds = Math.floor((new Date() - new Date(pr.createdAt)) / 1000);
+            let minutes = Math.floor(seconds / 60);
+            let hours = Math.floor(minutes / 60);
+            let days = Math.floor(hours / 24);
+            hours = hours - (days * 24);
+            minutes = minutes - (days * 24 * 60) - (hours * 60);
+            let ago = `${days}d${hours}h${minutes}m ago`
+
+            item = ['#' + pr.number, pr.author.login, ago, jenkins, sonar, pr.reviews.totalCount > 0]
+            itemLength = item.join('').length;
+            if (itemLength >= prData.maxLength) prData.maxLength = itemLength;
+            prData.items.push(item);
+        });
+        dbg(prData);
+        let svg = multiRowBadge(prData, multRow);
         res.set('Content-Type', 'image/svg+xml');
         res.send(svg);
     });

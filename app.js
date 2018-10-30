@@ -2,6 +2,7 @@ const fs = require('fs');
 const readline = require('readline');
 
 let done = new Promise(resolve => {
+    console.log('starting app');
     readline.createInterface(fs.createReadStream('./config/app.properties'))
         .on('line', line => {
             if (!line.startsWith('#') && !/^ *$/.test(line)) {
