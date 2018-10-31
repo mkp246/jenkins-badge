@@ -148,23 +148,42 @@ github.get("/:repo/openprs", (req, res) => {
     let repo = req.params.repo;
     dbg("repo: %s", repo);
     gitHubApi.getOpenPRs(repo, (err, data) => {
-        dbg(data);
         data = JSON.parse(data);
         prData = {
             cols: 6,
             items: [],
-            colors: [],
-            maxLength: 0
+            colors: ['', 'blue', 'pink', {
+                    'SUCCESS': 'ghGreen',
+                    'PENDING': 'yellow',
+                    'FAILURE': 'red',
+                    'N/A': 'yellow'
+                },
+                {
+                    'SUCCESS': 'ghGreen',
+                    'ERROR': 'red',
+                    'N/A': 'yellow'
+                },
+                {
+                    'true': 'ghGreen',
+                    'false': 'red'
+                }
+            ],
+            len: [5, -1, 13, 7, 7, 5]
         };
         data.data.repository.pullRequests.nodes.forEach((pr) => {
-            let jenkins = pr.commits.nodes[0].commit.status.contexts.filter((context) => {
-                return context.context == 'Jenkins Bot'
-            })[0];
-            let sonar = pr.commits.nodes[0].commit.status.contexts.filter((context) => {
-                return context.context == 'sonarqube'
-            })[0];
-            jenkins = jenkins ? jenkins.state : 'N/A';
-            sonar = sonar ? sonar.state : 'N/A';
+            if (pr.commits.nodes[0].commit.status) {
+                var jenkins = pr.commits.nodes[0].commit.status.contexts.filter((context) => {
+                    return context.context == 'Jenkins Bot'
+                })[0];
+                var sonar = pr.commits.nodes[0].commit.status.contexts.filter((context) => {
+                    return context.context == 'sonarqube'
+                })[0];
+                jenkins = jenkins ? jenkins.state : 'N/A';
+                sonar = sonar ? sonar.state : 'N/A';
+            } else {
+                jenkins = 'N/A';
+                sonar = 'N/A';
+            }
 
             let seconds = Math.floor((new Date() - new Date(pr.createdAt)) / 1000);
             let minutes = Math.floor(seconds / 60);
@@ -175,8 +194,7 @@ github.get("/:repo/openprs", (req, res) => {
             let ago = `${days}d${hours}h${minutes}m ago`
 
             item = ['#' + pr.number, pr.author.login, ago, jenkins, sonar, pr.reviews.totalCount > 0]
-            itemLength = item.join('').length;
-            if (itemLength >= prData.maxLength) prData.maxLength = itemLength;
+            if (item[1].length > prData.len[1]) prData.len[1] = item[1].length;
             prData.items.push(item);
         });
         dbg(prData);

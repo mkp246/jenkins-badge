@@ -1,18 +1,11 @@
 'use strict';
 const colorMap = require('./colorMap');
-
-const stringWidth = require('string-width');
 const baseWidth = 11;
 
-var defaultOptions = {
-    color1: colorMap.red,
-    color2: colorMap.yellow,
-    color3: colorMap.blue,
-};
-
 module.exports = function badge(options, template) {
+    options.maxLength = options.len.reduce((item, prev) => item + prev);
     options.maxLength *= baseWidth;
-    options.maxLength += (options.cols - 1) * baseWidth;
+    options.maxLength += ((options.cols - 1) * (baseWidth - 2) * 2);
     options.baseWidth = baseWidth;
     // let subjectWidth = stringWidth(config.subject) * baseWidth + 10;
     // let status1Width = stringWidth(config.status1) * baseWidth + 10;
