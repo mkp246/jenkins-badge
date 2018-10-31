@@ -149,6 +149,10 @@ github.get("/:repo/openprs", (req, res) => {
     dbg("repo: %s", repo);
     gitHubApi.getOpenPRs(repo, (err, data) => {
         data = JSON.parse(data);
+        if(data.errors!=null){
+            res.sendStatus(503);
+            return;
+        }
         prData = {
             cols: 6,
             items: [],
@@ -164,11 +168,11 @@ github.get("/:repo/openprs", (req, res) => {
                     'N/A': 'yellow'
                 },
                 {
-                    'true': 'ghGreen',
-                    'false': 'red'
+                    'Approved': 'ghGreen',
+                    'notApproved': 'red'
                 }
             ],
-            len: [5, -1, 13, 7, 7, 5]
+            len: [5, -1, 13, 7, 7, 11]
         };
         data.data.repository.pullRequests.nodes.forEach((pr) => {
             if (pr.commits.nodes[0].commit.status) {
@@ -193,11 +197,10 @@ github.get("/:repo/openprs", (req, res) => {
             minutes = minutes - (days * 24 * 60) - (hours * 60);
             let ago = `${days}d${hours}h${minutes}m ago`
 
-            item = ['#' + pr.number, pr.author.login, ago, jenkins, sonar, pr.reviews.totalCount > 0]
+            item = ['#' + pr.number, pr.author.login, ago, jenkins, sonar, pr.reviews.totalCount > 0 ? 'Approved' : 'notApproved']
             if (item[1].length > prData.len[1]) prData.len[1] = item[1].length;
             prData.items.push(item);
         });
-        dbg(prData);
         let svg = multiRowBadge(prData, multRow);
         res.set('Content-Type', 'image/svg+xml');
         res.send(svg);
