@@ -1,0 +1,12 @@
+[Unit]
+Description=jenkins-badge
+
+[Service]
+ExecStart=/usr/local/bin/npm start
+Restart=always
+# Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
+Environment=PATH=/usr/bin:/usr/local/bin
+WorkingDirectory=/root/jenkins-badge/
+
+[Install]
+WantedBy=multi-user.target

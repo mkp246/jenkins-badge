@@ -1,5 +1,5 @@
 var package = require('./package');
-var destFile = 'dist/' + package.name + '_' + package.version + '.tgz'
+var destFile = 'dist/' + package.name + '-' + package.version + '.tgz'
 
 module.exports = function(grunt) {
     grunt.initConfig({
@@ -17,6 +17,7 @@ module.exports = function(grunt) {
                         'certs/**',
                         'config/**',
                         'lib/**',
+                        'service/**',
                         '*',
                         'node_modules/debug/**',
                         'node_modules/ms/**',

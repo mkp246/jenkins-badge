@@ -1,0 +1,10 @@
+install app
+extract zip to /root/jenkins-badge direcory: mkdir /root/jenkins-badge && tar -xvvf jenkins-badge-*.tgz -C /root/jenkins-badge
+
+install service: cp /root/jenkins-badge/service/linux/jenkins-badge.service /etc/systemd/system/jenkins-badge.service
+
+start service: service jenkins-badge start
+stop service: service jenkins-badge stop
+restart service: service jenkins-badge restart
+see logs : journalctl -xfe --unit jenkins-badge
+
