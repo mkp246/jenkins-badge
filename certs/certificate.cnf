@@ -1,0 +1,15 @@
+[ v3_inter_cert ]
+basicConstraints=CA:TRUE
+nsCertType=client,server,email
+keyUsage=keyCertSign,cRLSign
+extendedKeyUsage=serverAuth,clientAuth,codeSigning,emailProtection
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer
+
+[ v3_server_cert ]
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer
+subjectAltName=@aln 
+
+[ aln ]
+DNS.1=inmkumar1402.microfocus.com
