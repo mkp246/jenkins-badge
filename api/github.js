@@ -90,6 +90,10 @@ github.get("/:repo/contributors", (req, res) => {
             return;
         }
         data = JSON.parse(data);
+        if (data == null && data.length == null) {
+            res.sendStatus(503);
+            return;
+        }
         let contributorCount = data.length.toString();
         let svg = badge({
             subject: 'contributors',
@@ -110,6 +114,10 @@ github.get("/:repo/legends", (req, res) => {
             return;
         }
         data = JSON.parse(data);
+        if (data == null) {
+            res.sendStatus(503);
+            return;
+        }
         data = data.slice(-5);
         let legends = [];
         let dataLength = data.length - 1;
@@ -157,7 +165,7 @@ github.get("/:repo/openprs", (req, res) => {
     dbg("repo: %s", repo);
     gitHubApi.getOpenPRs(repo, (err, data) => {
         data = JSON.parse(data);
-        if(data.errors!=null){
+        if (data.errors != null) {
             res.sendStatus(503);
             return;
         }
